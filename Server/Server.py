@@ -3,9 +3,14 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
     return "Hello World"
+
+
+@app.route("/test")
+def test():
+    return "This is a test page"
 
 
 if __name__ == "__main__":
