@@ -1,17 +1,20 @@
-from flask import Flask
+from flask import Flask, render_template
 
-app = Flask(__name__)
+
+app = Flask(__name__, template_folder='../templates')
 
 
 @app.route("/")
-def index():
-    return "Hello World"
+@app.route("/home")
+@app.route("/Home")
+def home():
+    return render_template('Home.html')
 
 
 @app.route("/test")
 def test():
-    return "This is a test page"
+    return render_template('Test.html')
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
