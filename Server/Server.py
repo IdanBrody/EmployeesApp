@@ -1,9 +1,13 @@
-import json
 from flask import Flask, render_template, request
-from Employee import Employee
+from flaskext.mysql import MySQL
 
-app = Flask(__name__, template_folder='../templates', static_folder="../static")
-Employees = {}
+app = Flask(__name__)
+mySql = MySQL()
+app.config['MYSQL_DATABASE_USER'] = "employees_dev"
+app.config['MYSQL_DATABASE_PASSWORD'] = "pass12345"
+app.config['MYSQL_DATABASE_DB'] = "employees"
+app.config['MYSQL_DATABASE_HOST'] = "localhost"
+mySql.init_app(app)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -15,31 +19,30 @@ def home():
 
 @app.route("/test")
 def test():
+    connection = mySql.connect()
     return render_template('Test.html')
 
 
 @app.route("/addEmployee", methods=["POST"])
 def addEmployee():
-    employee_data = request.json
-    print("1")
-    print(employee_data)
-    if isinstance(employee_data, str):
-        employee_data = json.loads(employee_data)
-    print("2")
-    print(employee_data)
-    first_name = employee_data['first name']
-    last_name = employee_data['last name']
-    department = employee_data['department']
-    employee = Employee.Employee(first_name, last_name, department)
-    Employees[employee.getID()] = employee
-    print(employee.getID())
-    print(Employees)
-    return "Finished"
+    # if isinstance(employee_data, str):
+    #    employee_data = json.loads(employee_data)
+    # first_name = employee_data['first name']
+    # last_name = employee_data['last name']
+    # department = employee_data['department']
+    # employee = Employee.Employee(first_name, last_name, department)
+    # Employees[employee.getID()] = employee
+    # print(employee.getID())
+    return "added Employee " + str(request.json)
+
+
+@app.route("/deleteEmplployee/<empID>", methods=["DELETE"])
+def deleteEmployee(empID):
+    return f"Deleted employee id: {empID}"
 
 
 @app.route("/EmployeesList", methods=["GET"])
 def EmployeesList():
-    print(Employees)
     return "Finished"
 
 

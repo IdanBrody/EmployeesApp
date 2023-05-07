@@ -10,7 +10,11 @@ class Employee:
         print(self.__id)
 
     def __repr__(self):
-        return f"name {self.__firstName} {self.__lastName} department {self.__Department}"
+        return f"name: {self.__firstName} {self.__lastName} department: {self.__Department}\n"
 
     def getID(self):
         return self.__id
+
+    def toDict(self):
+        return {"id": self.__id, "first name" : self.__firstName, "last name" : self.__lastName, "department" :
+            self.__Department}

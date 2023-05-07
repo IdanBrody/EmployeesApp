@@ -1,39 +1,42 @@
 import requests
 import json
+import Employee
 
 
-
-
-
-def printMenu(functions):
-    for key, value in functions.items():
-        print(key, ":", value)
+def printMenu():
+    print("0 : testServer")
+    print("1 : addEmployee")
+    print("2 : getEmployeeByName")
+    print("3 : getEmployeeByID")
+    print("4:  getAllEmployees")
+    print("5 : updateEmployee")
+    print("6 : deleteEmployee")
+    print("7 : importEmployeesToCSV")
+    print("8 : exportEmployeesFromCSV")
+    print("9 : exit")
 
 
 def testServer():
-    url = 'http://127.0.0.1:5000/test'
-    main(url)
-
+    res = requests.get(url + "/test")
+    print(res.status_code)
 
 def addEmployee():
     url = 'http://127.0.0.1:5000/addEmployee'
     firstName = input("Enter first name: ")
     lastName = input("Enter last name: ")
     department = input("Enter Department: ")
-    employee_data = {
-        'first name': firstName,
-        'last name': lastName,
-        'department': department
-    }
-    json_data = json.dumps(employee_data)
-    response = requests.post(url, json=json_data)
-    print(json_data)
-    print(response.status_code)
-    print(response.text)
- #   if response.status_code == 200:
-  #      print("Employee added successfully")
-  #  else:
-   #     print("Error, oops", response.text)
+    emp = Employee.Employee(firstName, lastName, department)
+    # employee_data = {
+    #     'first name': firstName,
+    #     'last name': lastName,
+    #     'department': department
+    # }
+    # json_data = json.dumps(employee_data)
+    response = requests.post(url, json=emp.__dict__)
+    if response.status_code == 200:
+        print("Employee added successfully")
+    else:
+        print("Error, oops", response.text)
 
 
 def getEmployeeByName():
@@ -55,8 +58,9 @@ def updateEmployee():
 
 
 def deleteEmployee():
-    pass
-
+    empID = int(input("Please insert employee's ID to delete: \n"))
+    res = requests.delete(url + f'deleteEmplployee/{empID}')
+    print(res.text)
 
 def importEmployeesToCSV():
     pass
@@ -79,39 +83,17 @@ def isOpen(choice, url):
 
 
 functions = {
-    0: "testServer",
-    1: "addEmployee",
-    2: "getEmployeeByName",
-    3: "getEmployeeByID",
-    4: "getAllEmployees",
-    5: "updateEmployee",
-    6: "deleteEmployee",
-    7: "importEmployeesToCSV",
-    8: "exportEmployeesFromCSV",
-    9: "exit"
+    0: testServer,
+    1: addEmployee,
+    2: getEmployeeByName,
+    3: getEmployeeByID,
+    4: getAllEmployees,
+    5: updateEmployee,
+    6: deleteEmployee,
+    7: importEmployeesToCSV,
+    8: exportEmployeesFromCSV,
+    9: exit
 }
-
-def switchCase(choice):
-    if choice == 0:
-        testServer()
-    elif choice == 1:
-        addEmployee()
-    elif choice == 2:
-        getEmployeeByName()
-    elif choice == 3:
-        getEmployeeByID()
-    elif choice == 4:
-        getAllEmployees()
-    elif choice == 5:
-        updateEmployee()
-    elif choice == 6:
-        deleteEmployee()
-    elif choice == 7:
-        importEmployeesToCSV()
-    elif choice == 8:
-        exportEmployeesFromCSV()
-    elif choice == 9:
-        exit(0)
 
 
 def main(url):
@@ -119,9 +101,9 @@ def main(url):
     print("Welcome")
     while isOpen(choice, url):
         print(url)
-        printMenu(functions)
+        printMenu()
         choice = int(input())
-        switchCase(choice)
+        functions[choice]()
 
 
 url = 'http://127.0.0.1:5000/'
