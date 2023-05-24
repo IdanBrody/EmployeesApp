@@ -19,6 +19,8 @@ def printMenu():
 def testServer():
     res = requests.get(url + "/test")
     print(res.status_code)
+    print(res.text)
+
 
 def addEmployee():
     url = 'http://127.0.0.1:5000/addEmployee'
@@ -26,31 +28,29 @@ def addEmployee():
     lastName = input("Enter last name: ")
     department = input("Enter Department: ")
     emp = Employee.Employee(firstName, lastName, department)
-    # employee_data = {
-    #     'first name': firstName,
-    #     'last name': lastName,
-    #     'department': department
-    # }
-    # json_data = json.dumps(employee_data)
     response = requests.post(url, json=emp.__dict__)
-    if response.status_code == 200:
-        print("Employee added successfully")
-    else:
-        print("Error, oops", response.text)
+    if response.status_code != 200:
+        print("OOPS there's an ERRORRRR\n" + response.text)
 
 
 def getEmployeeByName():
-    pass
+    name = input("Whats the first name you want to search ? ")
+    response = requests.get(url + f'/getByName/{name}')
+    print(response.text)
 
 
 def getEmployeeByID():
-    pass
+    empID = int(input("Please insert employee's ID to print: \n"))
+    response = requests.get(url + f'getByID/{empID}')
+    print(response.text)
 
 
 def getAllEmployees():
-    url = 'http://127.0.0.1:5000/EmployeesList'
-    response = requests.get(url)
-    print(response.text)
+    response = requests.get(url + "/EmployeesList")
+    emp_list = json.loads(response.text)
+    print("Employees list:")
+    for employee in emp_list:
+        print(employee)
 
 
 def updateEmployee():
@@ -61,6 +61,7 @@ def deleteEmployee():
     empID = int(input("Please insert employee's ID to delete: \n"))
     res = requests.delete(url + f'deleteEmplployee/{empID}')
     print(res.text)
+
 
 def importEmployeesToCSV():
     pass
@@ -100,7 +101,6 @@ def main(url):
     choice = 400
     print("Welcome")
     while isOpen(choice, url):
-        print(url)
         printMenu()
         choice = int(input())
         functions[choice]()
